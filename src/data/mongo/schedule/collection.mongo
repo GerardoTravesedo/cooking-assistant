@@ -1,0 +1,49 @@
+db.createCollection("schedules", {
+    validator: {
+        $jsonSchema: {
+            bsonType: "object",
+            required: ["_id", "userId", "meals"],
+            properties: {
+                _id: {
+                    bsonType: "string",
+                    description: "Unique identifier representing this schedule"
+                },
+                userId: {
+                    bsonType: "string",
+                    description: "Unique identifier of the user that owns this schedule"
+                },
+                meals: {
+                    bsonType: "array",
+                    minItems: 1,
+                    description: "List of meals included in this schedule. The index in this array defines the order of the meals",
+                    items: {
+                        bsonType: "object",
+                        required: ["name", "epoch"],
+                        additionalProperties: false,
+                        description: "Object containing all the information about a specific meal in this schedule",
+                        properties: {
+                            name: {
+                                bsonType: "string"
+                                description: "Name of this meal"
+                            },
+                            epoch: {
+                                bsonType: "int",
+                                minimum: 0,
+                                maximum: 96,
+                                description: "15 minute epoch for this meal"
+                            },
+                            ingredients: {
+                                bsonType: "array",
+                                description: "Array containing all ingredients that comprise this meal",
+                                items: {
+                                    bsonType: "string",
+                                    description: "Name of the ingredient"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+})

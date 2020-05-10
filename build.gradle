@@ -1,0 +1,47 @@
+plugins {
+    id 'java'
+
+    id 'org.springframework.boot' version '2.2.4.RELEASE'
+
+    // A Gradle plugin that provides Maven-like dependency management and exclusions (provides support for bom files)
+    id 'io.spring.dependency-management' version '1.0.7.RELEASE'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // 'implementation' if other projects that have this library as a dependency don't need to transitively inherit the dependency
+    // 'api' if they do
+
+    // bom = bill-of-materials (maven .pom files that use <dependencyManagement>)
+    // bom files help us consistently use the recommended set of version for our dependencies (and avoid incompatibilities)
+    implementation 'org.springframework.boot:spring-boot-dependencies:2.2.5.RELEASE'
+
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+
+    implementation 'org.mongodb:mongo-java-driver:3.12.1'
+
+    implementation 'org.mongojack:mongojack:3.0.1'
+
+    implementation 'com.google.guava:guava:19.0'
+
+    compileOnly 'org.projectlombok:lombok:1.18.8'
+    annotationProcessor 'org.projectlombok:lombok:1.18.8'
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+    testImplementation 'de.flapdoodle.embed:de.flapdoodle.embed.mongo:2.2.0'
+
+    components {
+        withModule('org.springframework:spring-beans') {
+            allVariants {
+                withDependencyConstraints {
+                    // Need to patch constraints because snakeyaml is an optional dependency
+                    it.findAll { it.name == 'snakeyaml' }.each { it.version { strictly '1.19' } }
+                }
+            }
+        }
+    }
+}
